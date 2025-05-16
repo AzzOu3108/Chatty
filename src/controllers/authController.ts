@@ -2,12 +2,7 @@ import { Request, Response } from "express"
 import { User } from "../models/user";
 import bcrypt from 'bcryptjs'
 import { generateToken } from "../utils/generateToken";
-
-interface SignupBody {
-    fullName: string;
-    email: string;
-    password: string;
-};
+import { SignupBody, LoginBody } from "../types/AuthRequest";
 
 export const signup = async (req: Request<{}, {}, SignupBody>, res: Response) => {
     const { fullName, email, password } = req.body 
@@ -53,10 +48,6 @@ export const signup = async (req: Request<{}, {}, SignupBody>, res: Response) =>
     }
 };
 
-interface LoginBody {
-    email: string;
-    password: string;
-};
 
 export const login = async (req:Request<{}, {}, LoginBody>, res:Response) =>{
     const {email, password} = req.body
