@@ -1,0 +1,22 @@
+export interface AuthUser {
+  _id?: string;
+  fullName?: string;
+  email?: string;
+  profilePic?: string;
+}
+
+export interface SignupBody {
+  fullName: string;
+  email: string;
+  password: string;
+}
+
+export interface AuthStore {
+  authUser: AuthUser | null;
+  isSigningUp: boolean;
+  isLoggingIn: boolean;
+  isUpdatedProfile: boolean;
+  isCheckingAuth: boolean;
+  checkAuth: () => Promise<void>;
+  signup: (data: SignupBody) => Promise<void>;
+}
