@@ -7,9 +7,9 @@ interface AuthImagePatternProps {
 
 const AuthImagePattern: React.FC<AuthImagePatternProps> = ({ title, subtitle }) => {
   return (
-    <div className="hidden lg:flex items-center justify-center bg-base-200 p-20 pt-16 pb-10">
-      <div className="max-w-sm text-center">
-        <div className="grid grid-cols-3 gap-3 mb-6">
+    <div className="hidden lg:flex items-center justify-center bg-base-200 py-10 pt-11">
+      <div className="max-w-sm text-center pt-2">
+        <div className="grid grid-cols-3 gap-3 mb-1">
           {[...Array(9)].map((_, i) => (
             <div
               key={i}

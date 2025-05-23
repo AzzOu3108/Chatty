@@ -34,7 +34,7 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="h-screen grid lg:grid-cols-2 sm:pt-7 ">
+    <div className="h-screen grid lg:grid-cols-2 pt-7 overflow-hidden">
       {/* left side */}
       <div className="flex flex-col justify-center items-center p-6 sm:p-12">
         <div className="w-full max-w-md space-y-5">
@@ -49,7 +49,7 @@ const SignUpPage = () => {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6 ">
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium pb-2">Full Name</span>
@@ -137,12 +137,10 @@ const SignUpPage = () => {
 
       {/* right side */}
 
-      <div>
         <AuthImagePattern
         title="Join our community"
         subtitle="Connect with friends, share moments, and stay in touch with your loved ones."
       />
-      </div>
       
     </div>
   );
