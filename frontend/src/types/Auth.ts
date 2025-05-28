@@ -22,6 +22,7 @@ export interface AuthStore {
   isLoggingIn: boolean;
   isUpdatedProfile: boolean;
   isCheckingAuth: boolean;
+  onlineUsers: string[];
   checkAuth: () => Promise<void>;
   signup: (data: SignupBody) => Promise<void>;
 }
