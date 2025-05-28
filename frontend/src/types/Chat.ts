@@ -10,3 +10,11 @@ export interface ChatStore {
   getMessages: (userId: string) => Promise<void>;
   setSelectedUser: (user: AuthUser | null) => void;
 }
+
+export interface Message {
+  _id: string;
+  sender: string; 
+  receiver: string;
+  content: string;
+  createdAt: string;
+}

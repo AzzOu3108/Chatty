@@ -31,8 +31,9 @@ export const useAuthStore = create<AuthStore>((set)=>({
             const res = await axiosInstance.post("/auth/signup", data)
             set({ authUser: res.data })
             toast.success("Account created successfully")
-        } catch (error: any) {
-            toast.error(error.response.data.message)
+        } catch (error) {
+            const err = error as any
+            toast.error(err?.response?.data?.message);
         } finally {
             set({ isSigningUp: false })
         }
@@ -44,8 +45,9 @@ export const useAuthStore = create<AuthStore>((set)=>({
             const res = await axiosInstance.post("/auth/login", data);
             set({ authUser: res.data });
             toast.success("Logged in successfully");
-        } catch (error: any) {
-            toast.error(error?.response?.data?.message || "Login failed");
+        } catch (error) {
+            const err = error as any
+            toast.error(err?.response?.data?.message || "Login failed");
         } finally {
             set({ isLoggingIn: false });
         }
@@ -55,8 +57,9 @@ export const useAuthStore = create<AuthStore>((set)=>({
         try {
             await axiosInstance.post("/auth/logout")
             set({ authUser: null })
-        } catch (error: any) {
-            toast.error(error.response.data.message)
+        } catch (error) {
+            const err = error as any
+            toast.error(err?.response?.data?.message);
         }
     },
 
@@ -65,9 +68,10 @@ export const useAuthStore = create<AuthStore>((set)=>({
         try {
            await axiosInstance.put("/auth/update-profile", data)
             toast.success("Profile updated successfully")
-        } catch (error: any) {
+        } catch (error) {
             console.log("error in update profile", error)
-            toast.error(error.response.data.message)
+            const err = error as any
+            toast.error(err?.response?.data?.message);
         } finally {
             set({ isUpdatedProfile: false })
         }
