@@ -17,6 +17,8 @@ const ChatContainer = () => {
     }
   },[selectedUser?._id, getMessages])
 
+  if (!authUser) return null;
+
   if(isMessagesLoading) {
     return (
       <div className="flex flex-1 flex-col overflow-auto">
