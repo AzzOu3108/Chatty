@@ -37,16 +37,26 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         }
     },
 
-  sendMessage: async (data: { text: string; image?: string | null; receiverId: string }) => {
-    const { messages } = get();
-    try {
-      const res = await axiosInstance.post(`/messages/send/${data.receiverId}`, data);
-      set({ messages: [...messages, res.data] });
-    } catch (error) {
-      const err = error as any;
-      toast.error(err?.response?.data?.message);
-    }
-  },
+  sendMessage: async (data: { 
+  text: string; 
+  image?: string | null; 
+  receiverId: string 
+  }) => {
+  const { messages } = get();
+  try {
+    const res = await axiosInstance.post(
+      `/messages/send/${data.receiverId}`, 
+      {
+        text: data.text,
+        image: data.image
+      }
+    );
+    set({ messages: [...messages, res.data] });
+  } catch (error) {
+    const err = error as any;
+    toast.error(err?.response?.data?.message);
+  }
+},
 
   subscribeToMessages: () => {
     const { selectedUser } = get();
@@ -54,7 +64,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     const socket = useAuthStore.getState().socket;
     if (!selectedUser || !authUser || !socket) return;
 
-    // Remove previous listener to prevent duplicates
+    
     socket.off("newMessage");
 
     socket.on("newMessage", (newMessage: Message) => {

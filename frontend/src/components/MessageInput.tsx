@@ -30,22 +30,23 @@ const MessageInput = () => {
   };
 
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!text.trim() && !imagePreview) return;
-    if (!selectedUser?._id) return; // <-- Add this line
-    try {
-      await sendMessage({
-        content: text.trim(),
-        image: imagePreview,
-        receiverId: selectedUser._id, // now always a string
-      });
-      setText("");
-      setImagePreview(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    } catch (error) {
-      console.error("Failed to send message:", error);
-    }
-  };
+  e.preventDefault();
+  if (!text.trim() && !imagePreview) return;
+  if (!selectedUser?._id) return;
+  
+  try {
+    await sendMessage({
+      text: text.trim(),
+      image: imagePreview,
+      receiverId: selectedUser._id,
+    });
+    setText("");
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  } catch (error) {
+    console.error("Failed to send message:", error);
+  }
+};
 
   return (
     <div className="p-4 w-full">
