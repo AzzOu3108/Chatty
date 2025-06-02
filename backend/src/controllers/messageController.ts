@@ -3,15 +3,16 @@ import { Message } from "../models/messages";
 import { Response } from "express";
 import { AuthRequest } from "../types/AuthRequest";
 import cloudinary from "../config/cloudinary";
+import { getReceiverSocketId, io } from "../config/socket";
 
 export const getUserForSidebar = async (req: AuthRequest, res: Response) => {
   try {
     const loggedInUserId = req.user._id;
-    const filterdUsers = await User.find(
+    const filteredUsers = await User.find(
       { _id: { $ne: loggedInUserId } }
     ).select("_id fullName profilePic");
 
-    res.status(200).json(filterdUsers);
+    res.status(200).json(filteredUsers);
   } catch (error) {
     console.log("Error in getUserForSidebar :", error);
     res.status(500).json({ message: "Server error" });
@@ -51,14 +52,22 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
     const newMessage = new Message({
       senderId,
       receiverId,
-      text,
+      text: text,
       image: imageUrl,
     });
 
     await newMessage.save();
 
-    //TODO: realtime functionality goes here =>socket.io
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    const senderSocketId = getReceiverSocketId(senderId);
 
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("newMessage", newMessage);
+    }
+    console.log("Saving message:", { senderId, receiverId, text, imageUrl });
     res.status(200).json(newMessage);
   } catch (error) {
     console.log("Error in sendMessages controller :", error);

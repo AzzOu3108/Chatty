@@ -8,14 +8,17 @@ export interface ChatStore {
   isMessagesLoading: boolean;
   getUsers: () => Promise<void>;
   getMessages: (userId: string) => Promise<void>;
-  sendMessage: (data: { content: string; image?: string | null; receiverId: string }) => Promise<void>;
+  sendMessage: (data: { text: string; image?: string | null; receiverId: string }) => Promise<void>;
   setSelectedUser: (user: AuthUser | null) => void;
+  subscribeToMessages: () => void;
+  unsubscribeFromMessages: () => void;
 }
 
 export interface Message {
   _id: string;
-  sender: string; 
-  receiver: string;
-  content: string;
+  senderId: string;
+  receiverId: string;
+  text: string;
+  image?: string;
   createdAt: string;
 }
