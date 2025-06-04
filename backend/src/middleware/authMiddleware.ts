@@ -2,39 +2,55 @@ import dotenv from 'dotenv'
 dotenv.config()
 import jwt from "jsonwebtoken";
 import { User } from "../models/user";
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
+import { AuthRequest } from "../types/AuthRequest"; // Ensure this type exists
 
+export const protectRoute = async (
+  req: AuthRequest, 
+  res: Response, 
+  next: NextFunction
+) => {
+  try {
+    let token: string | undefined;
+    
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } 
 
-export const protectRoute = async (req: Request, res:Response, next: NextFunction) =>{
-    try {
-        const token = req.cookies.jwt
-        if(!token){
-            res.status(401).json({message: "Unauthorized - No Token Provided"})
-        }
-
-        const secret = process.env.JWT_SECRET
-        if(!secret){
-             return res.status(500).json({ message: "JWT secret not set in environment variables" });
-        }
-
-        const decoded = jwt.verify(token, secret);
-
-        if (typeof decoded !== "object" || decoded === null || !("userId" in decoded)) {
-            return res.status(401).json({ message: "Unauthorized - Invalid Token" });
-        }
-
-        const userId = (decoded as jwt.JwtPayload).userId;
-        const user = await User.findById(userId).select("-password");
-
-        if(!user){
-            return res.status(404).json({message: "User not found"})
-        }
-
-        (req as any).user = user
-
-        next()
-    } catch (error) {
-        console.log("Error in protecteRoute middleware :", error)
-        res.status(500).json({message: "Server error"})
+    else if (req.cookies?.jwt) {
+      token = req.cookies.jwt;
     }
-}
+
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized - No Token Provided" });
+    }
+
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      return res.status(500).json({ message: "JWT secret not configured" });
+    }
+
+    const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
+    
+    if (!decoded.userId) {
+      return res.status(401).json({ message: "Unauthorized - Invalid Token Structure" });
+    }
+
+    const user = await User.findById(decoded.userId).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    req.user = user;
+    next();
+  } catch (error: any) {
+    console.log("Error in protectRoute middleware:", error.message);
+    
+    if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Unauthorized - Invalid Token" });
+    }
+    
+    res.status(500).json({ message: "Authentication server error" });
+  }
+};

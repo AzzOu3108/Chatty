@@ -1,7 +1,7 @@
 import { Request } from "express";
 
 export interface AuthRequest extends Request {
-  user?: any; // Replace 'any' with your User type if you have one
+  user?: any; 
 }
 
 export interface SignupBody {
