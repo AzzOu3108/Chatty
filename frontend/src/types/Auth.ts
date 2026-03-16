@@ -3,6 +3,7 @@ export interface AuthUser {
   fullName?: string;
   email?: string;
   profilePic?: string;
+  createdAt?: string;
 }
 
 export interface SignupBody {
@@ -26,6 +27,9 @@ export interface AuthStore {
   socket: any | null;
   checkAuth: () => Promise<void>;
   signup: (data: SignupBody) => Promise<void>;
-  connectSocket: () => Promise<void>,
-  disconnectSocket: () => Promise<void>
+  login: (data: LoginBody) => Promise<void>;
+  logout: () => Promise<void>;
+  updateProfil: (data: {profilePic: string}) => Promise<void>;
+  connectSocket: () => Promise<void>;
+  disconnectSocket: () => Promise<void>;
 }

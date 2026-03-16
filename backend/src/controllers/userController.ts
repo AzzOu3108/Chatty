@@ -19,7 +19,7 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
         {new: true}
     )
 
-    res.status(200).json(updateProfile)
+    res.status(200).json(updateUser)
     
   } catch (error) {
     console.log("Error in update profile:", error )
