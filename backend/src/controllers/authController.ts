@@ -88,10 +88,15 @@ export const login = async (req:Request<{}, {}, LoginBody>, res:Response) =>{
 
 export const logout = async (req:Request, res:Response) =>{
     try {
-        res.cookie("jwt", "", {maxAge:0})
+        res.cookie("jwt", "", {
+            maxAge: 0,
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        })
         res.status(200).json({message: "Logged out successfully"})
     } catch (error) {
-        console.log("Error in signup controller", error);
+        console.log("Error in logout controller", error);
         res.status(500).json({ message: 'Server error' });
     }
 };
