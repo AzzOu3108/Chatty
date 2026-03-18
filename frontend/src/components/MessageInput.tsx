@@ -15,11 +15,33 @@ const MessageInput = () => {
       toast.error("Please select an image file");
       return;
     }
+
+    const canvas = document.createElement("canvas");
+    const img = document.createElement("img");
     const reader = new FileReader();
+
     reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        setImagePreview(reader.result);
-      }
+      img.src = reader.result as string;
+      img.onload = () => {
+        const MAX_SIZE = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height && width > MAX_SIZE) {
+          height = (height * MAX_SIZE) / width;
+          width = MAX_SIZE;
+        } else if (height > MAX_SIZE) {
+          width = (width * MAX_SIZE) / height;
+          height = MAX_SIZE;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, width, height);
+        const compressed = canvas.toDataURL("image/jpeg", 0.7);
+        setImagePreview(compressed);
+      };
     };
     reader.readAsDataURL(file);
   };
@@ -30,23 +52,23 @@ const MessageInput = () => {
   };
 
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  if (!text.trim() && !imagePreview) return;
-  if (!selectedUser?._id) return;
-  
-  try {
-    await sendMessage({
-      text: text.trim(),
-      image: imagePreview,
-      receiverId: selectedUser._id,
-    });
-    setText("");
-    setImagePreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  } catch (error) {
-    console.error("Failed to send message:", error);
-  }
-};
+    e.preventDefault();
+    if (!text.trim() && !imagePreview) return;
+    if (!selectedUser?._id) return;
+
+    try {
+      await sendMessage({
+        text: text.trim(),
+        image: imagePreview,
+        receiverId: selectedUser._id,
+      });
+      setText("");
+      setImagePreview(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    }
+  };
 
   return (
     <div className="p-4 w-full">
